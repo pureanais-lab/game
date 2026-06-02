@@ -369,7 +369,7 @@ footer {
 const MONSTERS = [
   {name:'꼬마 슬라임',hp:30,atk:6,def:1,exp:10,gold:5,draw:h=>slimeSvg('#5DCAA5','#1D9E75',h)},
   {name:'뭉실 고블린',hp:55,atk:11,def:2,exp:18,gold:10,draw:h=>goblinSvg(h)},
-  {name:'해골 쫄병',hp:45,atk:10,def:2,exp:15,gold:8,draw:h=>skeletonSvg(h)},
+  {name:'멍멍 강아지',hp:45,atk:10,def:2,exp:15,gold:8,draw:h=>puppySvg(h)},
   {name:'아기 드래곤',hp:90,atk:18,def:5,exp:40,gold:30,draw:h=>dragonSvg(h)},
   {name:'보라 마법사',hp:75,atk:16,def:4,exp:32,gold:22,draw:h=>wizardSvg(h)},
   {name:'두근 마왕',hp:160,atk:25,def:9,exp:90,gold:70,draw:h=>demonSvg(h)},
@@ -395,15 +395,25 @@ function goblinSvg(hurt){
 <ellipse cx="58" cy="25" rx="5" ry="8" fill="#97C459" stroke="#3B6D11" stroke-width="2"/>
 ${face(hurt)}${cheeks()}`;
 }
-function skeletonSvg(hurt){
-  return `<ellipse cx="40" cy="32" rx="20" ry="22" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="2"/>
-<rect x="28" y="52" width="24" height="18" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="2"/>
-<line x1="34" y1="52" x2="34" y2="70" stroke="#B4B2A9" stroke-width="1.5"/>
-<line x1="40" y1="52" x2="40" y2="70" stroke="#B4B2A9" stroke-width="1.5"/>
-<line x1="46" y1="52" x2="46" y2="70" stroke="#B4B2A9" stroke-width="1.5"/>
+function puppySvg(hurt){
+  return `
+<ellipse cx="40" cy="50" rx="22" ry="18" fill="#FAC775" stroke="#BA7517" stroke-width="2"/>
+<ellipse cx="40" cy="32" rx="18" ry="17" fill="#FAC775" stroke="#BA7517" stroke-width="2"/>
+<ellipse cx="22" cy="22" rx="8" ry="11" fill="#FAC775" stroke="#BA7517" stroke-width="2" transform="rotate(-15 22 22)"/>
+<ellipse cx="58" cy="22" rx="8" ry="11" fill="#FAC775" stroke="#BA7517" stroke-width="2" transform="rotate(15 58 22)"/>
+<ellipse cx="22" cy="20" rx="5" ry="8" fill="#F09595" transform="rotate(-15 22 20)"/>
+<ellipse cx="58" cy="20" rx="5" ry="8" fill="#F09595" transform="rotate(15 58 20)"/>
+<ellipse cx="40" cy="40" rx="7" ry="5" fill="#F09595" opacity="0.6"/>
+<ellipse cx="37" cy="38" rx="2" ry="2.5" fill="#712B13" opacity="0.7"/>
+<ellipse cx="43" cy="38" rx="2" ry="2.5" fill="#712B13" opacity="0.7"/>
 ${hurt
-  ? `<line x1="28" y1="26" x2="38" y2="36" stroke="#888" stroke-width="2.5"/><line x1="38" y1="26" x2="28" y2="36" stroke="#888" stroke-width="2.5"/><line x1="42" y1="26" x2="52" y2="36" stroke="#888" stroke-width="2.5"/><line x1="52" y1="26" x2="42" y2="36" stroke="#888" stroke-width="2.5"/><path d="M33 46 Q40 42 47 46" stroke="#888" stroke-width="2" fill="none"/>`
-  : `<circle cx="33" cy="31" r="4.5" fill="#fff"/><circle cx="33" cy="31" r="2.5" fill="#222"/><circle cx="47" cy="31" r="4.5" fill="#fff"/><circle cx="47" cy="31" r="2.5" fill="#222"/><path d="M33 44 Q40 50 47 44" stroke="#888" stroke-width="2" fill="none"/>`}`;
+  ? `<line x1="28" y1="26" x2="36" y2="34" stroke="#9a6700" stroke-width="2.5"/><line x1="36" y1="26" x2="28" y2="34" stroke="#9a6700" stroke-width="2.5"/><line x1="44" y1="26" x2="52" y2="34" stroke="#9a6700" stroke-width="2.5"/><line x1="52" y1="26" x2="44" y2="34" stroke="#9a6700" stroke-width="2.5"/><path d="M33 46 Q40 43 47 46" stroke="#9a6700" stroke-width="2" fill="none" stroke-linecap="round"/>`
+  : `<circle cx="30" cy="29" r="4.5" fill="#fff"/><circle cx="30" cy="29" r="2.5" fill="#3a2000"/><circle cx="50" cy="29" r="4.5" fill="#fff"/><circle cx="50" cy="29" r="2.5" fill="#3a2000"/><circle cx="29" cy="28" r="1.2" fill="#fff"/><circle cx="49" cy="28" r="1.2" fill="#fff"/><path d="M33 44 Q40 50 47 44" stroke="#9a6700" stroke-width="2" fill="none" stroke-linecap="round"/>`}
+<ellipse cx="25" cy="36" rx="5" ry="3" fill="#F4C0D1" opacity="0.8"/>
+<ellipse cx="55" cy="36" rx="5" ry="3" fill="#F4C0D1" opacity="0.8"/>
+<ellipse cx="40" cy="64" rx="8" ry="5" fill="#FAC775" stroke="#BA7517" stroke-width="1.5"/>
+<ellipse cx="28" cy="64" rx="5" ry="4" fill="#FAC775" stroke="#BA7517" stroke-width="1.5"/>
+<ellipse cx="52" cy="64" rx="5" ry="4" fill="#FAC775" stroke="#BA7517" stroke-width="1.5"/>`;
 }
 function dragonSvg(hurt){
   return `<polygon points="40,6 50,22 62,14 56,28 70,30 56,38" fill="#EF9F27" stroke="#BA7517" stroke-width="1.5"/>
