@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>두근두근 몬스터 RPG</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fdf6ff;
+  --bg2: #f3e8ff;
+  --bg3: #ede0fa;
+  --card: #ffffff;
+  --border: #ddd0f0;
+  --text: #2d1a4a;
+  --text2: #6b5280;
+  --text3: #9e86b8;
+  --purple: #7c3aed;
+  --purple-l: #a78bfa;
+  --purple-ll: #ede9fe;
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --pink: #ec4899;
+  --teal: #14b8a6;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px 48px;
+}
+
+h1, .display { font-family: 'Jua', sans-serif; }
+
+.game {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.title-bar {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+.title-bar h1 {
+  font-size: 28px;
+  color: var(--purple);
+  letter-spacing: -0.5px;
+}
+.title-bar p {
+  font-size: 13px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: 'Jua', sans-serif;
+}
+.badge-lv { background: #fef9c3; color: #92400e; border: 1.5px solid #fde68a; }
+.badge-turn-player { background: #dbeafe; color: #1e40af; border: 1.5px solid #bfdbfe; }
+.badge-turn-monster { background: #fee2e2; color: #991b1b; border: 1.5px solid #fecaca; }
+
+.exp-bar-wrap {
+  flex: 1;
+  background: var(--bg3);
+  border-radius: 999px;
+  height: 10px;
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+}
+.exp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple-l), var(--pink));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.scene {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, #f3e8ff44 0%, transparent 70%),
+              radial-gradient(ellipse at 70% 50%, #fce7f344 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.combatant {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.combatant-art {
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-emoji { font-size: 58px; line-height: 1; }
+.cname {
+  font-family: 'Jua', sans-serif;
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.hp-wrap {
+  background: var(--bg2);
+  border-radius: 999px;
+  height: 10px;
+  width: 100%;
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+}
+.hp-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease, background 0.4s;
+}
+.hp-text {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+  font-family: 'Jua', sans-serif;
+}
+
+.vs-badge {
+  font-family: 'Jua', sans-serif;
+  font-size: 22px;
+  color: var(--text3);
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 6px;
+  text-align: center;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 3px;
+}
+.stat-val {
+  font-family: 'Jua', sans-serif;
+  font-size: 18px;
+  color: var(--purple);
+}
+
+.log-box {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  min-height: 96px;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.log-box .dmg { color: #dc2626; font-weight: 700; }
+.log-box .heal { color: #16a34a; font-weight: 700; }
+.log-box .info { color: #1d4ed8; }
+.log-box .ai { color: var(--text2); font-style: italic; }
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.act-btn {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.act-btn:hover:not(:disabled) {
+  border-color: var(--purple-l);
+  background: var(--purple-ll);
+  transform: translateY(-2px);
+}
+.act-btn:active:not(:disabled) { transform: translateY(0); }
+.act-btn:disabled { opacity: 0.38; cursor: default; }
+.act-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+.act-name {
+  font-family: 'Jua', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+}
+.act-cost {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.bottom-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.btn {
+  font-family: 'Jua', sans-serif;
+  font-size: 14px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn:hover { background: var(--bg3); border-color: var(--purple-l); }
+.btn-next { background: var(--purple); color: #fff; border-color: var(--purple); }
+.btn-next:hover { background: #6d28d9; border-color: #6d28d9; }
+.btn-reset { color: #b91c1c; border-color: #fca5a5; background: #fff1f2; }
+.btn-reset:hover { background: #fee2e2; }
+
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-7px) rotate(-3deg)}
+  40%{transform:translateX(7px) rotate(3deg)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+@keyframes bounce {
+  0%,100%{transform:translateY(0)}
+  40%{transform:translateY(-14px)}
+  70%{transform:translateY(-6px)}
+}
+@keyframes pop {
+  0%{transform:scale(1)}
+  50%{transform:scale(1.18)}
+  100%{transform:scale(1)}
+}
+.do-shake { animation: shake 0.4s ease; }
+.do-bounce { animation: bounce 0.45s ease; }
+.do-pop { animation: pop 0.3s ease; }
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="title-bar">
+    <h1>두근두근 몬스터 RPG</h1>
+    <p>귀여운 몬스터를 물리치고 최강 용사가 되어보세요!</p>
+  </div>
+
+  <div class="top-row">
+    <span class="badge badge-lv" id="levelBadge">Lv.1 용사</span>
+    <div class="exp-bar-wrap"><div class="exp-bar" id="expBar" style="width:0%"></div></div>
+    <span class="badge badge-turn-player" id="turnBadge">내 턴</span>
+  </div>
+
+  <div class="scene">
+    <div class="combatant">
+      <div class="combatant-art"><div class="hero-emoji">🧙</div></div>
+      <div class="cname">용사</div>
+      <div class="hp-wrap"><div class="hp-bar" id="heroBar" style="width:100%;background:#22c55e"></div></div>
+      <div class="hp-text" id="heroHpText">100 / 100</div>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="combatant" id="monsterCol">
+      <div class="combatant-art">
+        <svg id="monsterSvg" width="90" height="90" viewBox="0 0 80 80"></svg>
+      </div>
+      <div class="cname" id="monsterName">꼬마 슬라임</div>
+      <div class="hp-wrap"><div class="hp-bar" id="monsterBar" style="width:100%;background:#ef4444"></div></div>
+      <div class="hp-text" id="monsterHpText">30 / 30</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">공격력</div><div class="stat-val" id="atkVal">12</div></div>
+    <div class="stat-card"><div class="stat-label">방어력</div><div class="stat-val" id="defVal">5</div></div>
+    <div class="stat-card"><div class="stat-label">MP</div><div class="stat-val" id="mpVal">30/30</div></div>
+    <div class="stat-card"><div class="stat-label">골드</div><div class="stat-val" id="goldVal">0</div></div>
+  </div>
+
+  <div class="log-box" id="logBox"><span class="info">귀여운 몬스터들이 기다리고 있어요! 모험을 시작하세요.</span></div>
+
+  <div class="actions">
+    <button class="act-btn" onclick="doAction('attack')">
+      <span class="act-icon">⚔️</span>
+      <span class="act-name">일반 공격</span>
+      <span class="act-cost">기본 데미지</span>
+    </button>
+    <button class="act-btn" onclick="doAction('magic')">
+      <span class="act-icon">✨</span>
+      <span class="act-name">마법 공격</span>
+      <span class="act-cost">MP 8 소모</span>
+    </button>
+    <button class="act-btn" onclick="doAction('heal')">
+      <span class="act-icon">💚</span>
+      <span class="act-name">치유</span>
+      <span class="act-cost">MP 5 소모</span>
+    </button>
+    <button class="act-btn" onclick="doAction('defend')">
+      <span class="act-icon">🛡️</span>
+      <span class="act-name">방어</span>
+      <span class="act-cost">피해 감소</span>
+    </button>
+  </div>
+
+  <div class="bottom-row">
+    <button class="btn btn-next" id="nextBtn" style="display:none" onclick="nextBattle()">다음 전투 ▶</button>
+    <button class="btn btn-reset" onclick="resetGame()">↺ 처음부터</button>
+  </div>
+
+  <footer>AI가 매 전투마다 이야기를 만들어줘요 · Powered by Claude</footer>
+</div>
+
+<script>
+const MONSTERS = [
+  {name:'꼬마 슬라임',hp:30,atk:6,def:1,exp:10,gold:5,draw:h=>slimeSvg('#5DCAA5','#1D9E75',h)},
+  {name:'뭉실 고블린',hp:55,atk:11,def:2,exp:18,gold:10,draw:h=>goblinSvg(h)},
+  {name:'해골 쫄병',hp:45,atk:10,def:2,exp:15,gold:8,draw:h=>skeletonSvg(h)},
+  {name:'아기 드래곤',hp:90,atk:18,def:5,exp:40,gold:30,draw:h=>dragonSvg(h)},
+  {name:'보라 마법사',hp:75,atk:16,def:4,exp:32,gold:22,draw:h=>wizardSvg(h)},
+  {name:'두근 마왕',hp:160,atk:25,def:9,exp:90,gold:70,draw:h=>demonSvg(h)},
+];
+
+function face(hurt){
+  if(hurt) return `<circle cx="30" cy="36" r="3" fill="#555"/><circle cx="50" cy="36" r="3" fill="#555"/><path d="M33 46 Q40 42 47 46" stroke="#555" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  return `<circle cx="29" cy="35" r="4.5" fill="#fff"/><circle cx="51" cy="35" r="4.5" fill="#fff"/><circle cx="30" cy="36" r="2.5" fill="#222"/><circle cx="52" cy="36" r="2.5" fill="#222"/><circle cx="29" cy="34" r="1.2" fill="#fff"/><circle cx="51" cy="34" r="1.2" fill="#fff"/><path d="M32 44 Q40 51 48 44" stroke="#555" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+}
+function cheeks(cx1=24,cy1=42,cx2=56,cy2=42){
+  return `<ellipse cx="${cx1}" cy="${cy1}" rx="5" ry="3" fill="#F4C0D1" opacity="0.75"/><ellipse cx="${cx2}" cy="${cy2}" rx="5" ry="3" fill="#F4C0D1" opacity="0.75"/>`;
+}
+
+function slimeSvg(fill,stroke,hurt){
+  return `<ellipse cx="40" cy="48" rx="28" ry="22" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+<ellipse cx="33" cy="25" rx="9" ry="11" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+${face(hurt)}${cheeks()}`;
+}
+function goblinSvg(hurt){
+  return `<ellipse cx="40" cy="44" rx="22" ry="20" fill="#97C459" stroke="#3B6D11" stroke-width="2"/>
+<ellipse cx="40" cy="30" rx="18" ry="16" fill="#97C459" stroke="#3B6D11" stroke-width="2"/>
+<ellipse cx="22" cy="25" rx="5" ry="8" fill="#97C459" stroke="#3B6D11" stroke-width="2"/>
+<ellipse cx="58" cy="25" rx="5" ry="8" fill="#97C459" stroke="#3B6D11" stroke-width="2"/>
+${face(hurt)}${cheeks()}`;
+}
+function skeletonSvg(hurt){
+  return `<ellipse cx="40" cy="32" rx="20" ry="22" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="2"/>
+<rect x="28" y="52" width="24" height="18" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="2"/>
+<line x1="34" y1="52" x2="34" y2="70" stroke="#B4B2A9" stroke-width="1.5"/>
+<line x1="40" y1="52" x2="40" y2="70" stroke="#B4B2A9" stroke-width="1.5"/>
+<line x1="46" y1="52" x2="46" y2="70" stroke="#B4B2A9" stroke-width="1.5"/>
+${hurt
+  ? `<line x1="28" y1="26" x2="38" y2="36" stroke="#888" stroke-width="2.5"/><line x1="38" y1="26" x2="28" y2="36" stroke="#888" stroke-width="2.5"/><line x1="42" y1="26" x2="52" y2="36" stroke="#888" stroke-width="2.5"/><line x1="52" y1="26" x2="42" y2="36" stroke="#888" stroke-width="2.5"/><path d="M33 46 Q40 42 47 46" stroke="#888" stroke-width="2" fill="none"/>`
+  : `<circle cx="33" cy="31" r="4.5" fill="#fff"/><circle cx="33" cy="31" r="2.5" fill="#222"/><circle cx="47" cy="31" r="4.5" fill="#fff"/><circle cx="47" cy="31" r="2.5" fill="#222"/><path d="M33 44 Q40 50 47 44" stroke="#888" stroke-width="2" fill="none"/>`}`;
+}
+function dragonSvg(hurt){
+  return `<polygon points="40,6 50,22 62,14 56,28 70,30 56,38" fill="#EF9F27" stroke="#BA7517" stroke-width="1.5"/>
+<polygon points="40,6 30,22 18,14 24,28 10,30 24,38" fill="#EF9F27" stroke="#BA7517" stroke-width="1.5"/>
+<ellipse cx="40" cy="52" rx="26" ry="21" fill="#EF9F27" stroke="#BA7517" stroke-width="2"/>
+<ellipse cx="40" cy="37" rx="18" ry="16" fill="#EF9F27" stroke="#BA7517" stroke-width="2"/>
+${face(hurt)}${cheeks()}
+<ellipse cx="36" cy="45" rx="3" ry="2" fill="#BA7517" opacity="0.5"/>
+<ellipse cx="44" cy="45" rx="3" ry="2" fill="#BA7517" opacity="0.5"/>`;
+}
+function wizardSvg(hurt){
+  return `<polygon points="40,3 54,30 26,30" fill="#AFA9EC" stroke="#534AB7" stroke-width="2"/>
+<ellipse cx="40" cy="48" rx="20" ry="18" fill="#CECBF6" stroke="#534AB7" stroke-width="2"/>
+<ellipse cx="40" cy="35" rx="16" ry="14" fill="#CECBF6" stroke="#534AB7" stroke-width="2"/>
+${face(hurt)}${cheeks()}
+<circle cx="57" cy="18" r="5" fill="#FAC775" stroke="#BA7517" stroke-width="1.5"/>
+<circle cx="26" cy="62" r="4" fill="#FAC775" stroke="#BA7517" stroke-width="1.5"/>
+<circle cx="61" cy="55" r="3" fill="#C0DD97" stroke="#3B6D11" stroke-width="1"/>`;
+}
+function demonSvg(hurt){
+  return `<polygon points="26,10 33,28 19,24" fill="#F09595" stroke="#A32D2D" stroke-width="1.5"/>
+<polygon points="54,10 47,28 61,24" fill="#F09595" stroke="#A32D2D" stroke-width="1.5"/>
+<ellipse cx="40" cy="52" rx="26" ry="19" fill="#F09595" stroke="#A32D2D" stroke-width="2"/>
+<ellipse cx="40" cy="37" rx="20" ry="18" fill="#F09595" stroke="#A32D2D" stroke-width="2"/>
+${face(hurt)}
+<ellipse cx="24" cy="42" rx="5.5" ry="3.5" fill="#F4C0D1" opacity="0.9"/>
+<ellipse cx="56" cy="42" rx="5.5" ry="3.5" fill="#F4C0D1" opacity="0.9"/>
+<path d="M30 53 Q40 62 50 53" stroke="#A32D2D" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+}
+
+let hero={hp:100,maxHp:100,mp:30,maxMp:30,atk:12,def:5,level:1,exp:0,gold:0,defending:false};
+let monster=null, turn='player', busy=false, monsterIdx=0, monsterHurt=false;
+
+function getMonster(){
+  const m=MONSTERS[Math.min(monsterIdx,MONSTERS.length-1)];
+  return{name:m.name,hp:m.hp,maxHp:m.hp,atk:m.atk,def:m.def,exp:m.exp,gold:m.gold,draw:m.draw};
+}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function drawMonster(hurt){
+  if(!monster)return;
+  monsterHurt=hurt;
+  const svg=document.getElementById('monsterSvg');
+  svg.innerHTML=monster.draw(hurt);
+  svg.classList.remove('do-shake','do-bounce','do-pop');
+  void svg.offsetWidth;
+  if(hurt) svg.classList.add('do-shake');
+}
+
+function log(html){document.getElementById('logBox').innerHTML=html;}
+function addLog(html){document.getElementById('logBox').innerHTML+=`<br>${html}`;}
+
+function updateUI(){
+  const hPct=Math.max(0,Math.round(hero.hp/hero.maxHp*100));
+  const hBar=document.getElementById('heroBar');
+  hBar.style.width=hPct+'%';
+  hBar.style.background=hPct>50?'#22c55e':hPct>25?'#f59e0b':'#ef4444';
+  document.getElementById('heroHpText').textContent=`${Math.max(0,hero.hp)} / ${hero.maxHp}`;
+  if(monster){
+    const mPct=Math.max(0,Math.round(monster.hp/monster.maxHp*100));
+    document.getElementById('monsterBar').style.width=mPct+'%';
+    document.getElementById('monsterHpText').textContent=`${Math.max(0,monster.hp)} / ${monster.maxHp}`;
+    document.getElementById('monsterName').textContent=monster.name;
+    drawMonster(monsterHurt);
+  }
+  document.getElementById('atkVal').textContent=hero.atk;
+  document.getElementById('defVal').textContent=hero.def;
+  document.getElementById('mpVal').textContent=`${hero.mp}/${hero.maxMp}`;
+  document.getElementById('goldVal').textContent=hero.gold;
+  const expNeed=hero.level*30;
+  document.getElementById('expBar').style.width=Math.min(100,Math.round(hero.exp/expNeed*100))+'%';
+  document.getElementById('levelBadge').textContent=`Lv.${hero.level} 용사`;
+  const tb=document.getElementById('turnBadge');
+  if(turn==='player'){tb.textContent='내 턴';tb.className='badge badge-turn-player';}
+  else{tb.textContent='몬스터 턴';tb.className='badge badge-turn-monster';}
+}
+function setActionsEnabled(en){document.querySelectorAll('.act-btn').forEach(b=>b.disabled=!en);}
+
+async function callAI(prompt){
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:'당신은 귀엽고 발랄한 판타지 RPG 내레이터입니다. 한국어로 짧게 (1~2문장) 귀엽게 묘사해주세요. 몬스터는 아기처럼 귀엽게 반응합니다. 이모지 사용 금지.',
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const d=await r.json();
+    return d.content?.[0]?.text||'';
+  }catch(e){return '';}
+}
+
+async function doAction(type){
+  if(busy||turn!=='player'||!monster)return;
+  busy=true; setActionsEnabled(false);
+  hero.defending=false;
+  let desc='', dmg=0;
+  if(type==='attack'){
+    dmg=Math.max(1,rand(hero.atk-3,hero.atk+3)-monster.def);
+    monster.hp-=dmg;
+    desc=`용사가 ${monster.name}을(를) 공격! ${dmg} 데미지`;
+    monsterHurt=true;
+  } else if(type==='magic'){
+    if(hero.mp<8){log('<span class="info">MP가 부족합니다!</span>');busy=false;setActionsEnabled(true);return;}
+    hero.mp-=8; dmg=Math.max(1,rand(hero.atk,hero.atk*2)); monster.hp-=dmg;
+    desc=`마법 공격! ${monster.name}에게 ${dmg} 마법 데미지`; monsterHurt=true;
+  } else if(type==='heal'){
+    if(hero.mp<5){log('<span class="info">MP가 부족합니다!</span>');busy=false;setActionsEnabled(true);return;}
+    hero.mp-=5; const h=rand(15,25); hero.hp=Math.min(hero.maxHp,hero.hp+h);
+    desc=`치유 마법으로 HP ${h} 회복`; monsterHurt=false;
+  } else if(type==='defend'){
+    hero.defending=true; desc=`방어 자세를 취했습니다`; monsterHurt=false;
+  }
+  updateUI();
+  const ai=await callAI(`${desc}. 귀엽게 묘사해줘.`);
+  log(`<span class="dmg">${desc}!</span>${ai?`<br><span class="ai">${ai}</span>`:''}`);
+  if(monster.hp<=0){await victory();busy=false;return;}
+  turn='monster'; updateUI();
+  await new Promise(r=>setTimeout(r,1100));
+  await monsterTurn();
+  busy=false;
+}
+
+async function monsterTurn(){
+  if(!monster||monster.hp<=0)return;
+  monsterHurt=false;
+  const mDmg=Math.max(1,rand(monster.atk-3,monster.atk+3)-hero.def-(hero.defending?hero.def:0));
+  hero.hp-=mDmg;
+  const svg=document.getElementById('monsterSvg');
+  svg.classList.remove('do-shake','do-bounce'); void svg.offsetWidth;
+  svg.classList.add('do-bounce');
+  updateUI();
+  const desc=`${monster.name}의 공격! 용사에게 ${mDmg} 데미지`;
+  const ai=await callAI(`${desc}. 몬스터가 귀엽게 공격하는 장면을 묘사해줘.`);
+  addLog(`<span class="dmg">${desc}!</span>${ai?`<br><span class="ai">${ai}</span>`:''}`);
+  if(hero.hp<=0){await defeat();return;}
+  turn='player'; monsterHurt=false; updateUI(); setActionsEnabled(true);
+}
+
+async function victory(){
+  hero.exp+=monster.exp; hero.gold+=monster.gold; hero.mp=Math.min(hero.maxMp,hero.mp+5);
+  const lv=hero.exp>=hero.level*30;
+  if(lv){hero.level++;hero.maxHp+=15;hero.hp=hero.maxHp;hero.atk+=3;hero.def+=2;hero.maxMp+=5;hero.mp=hero.maxMp;}
+  monsterHurt=true; updateUI();
+  const ai=await callAI(`용사가 귀여운 ${monster.name}을(를) 물리쳤다. ${lv?'레벨업!':''} 몬스터가 도망가는 귀여운 장면을 묘사해줘.`);
+  addLog(`<span class="heal">승리! 경험치 +${monster.exp}, 골드 +${monster.gold}${lv?' · 레벨 업!':''}</span>${ai?`<br><span class="ai">${ai}</span>`:''}`);
+  setActionsEnabled(false);
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+async function defeat(){
+  setActionsEnabled(false);
+  const ai=await callAI(`귀여운 ${monster.name}이(가) 승리했다. 기뻐하는 귀여운 장면을 묘사해줘.`);
+  addLog(`<span class="dmg">패배했습니다...</span>${ai?`<br><span class="ai">${ai}</span>`:''}`);
+}
+
+function nextBattle(){
+  monsterIdx++; monster=getMonster(); turn='player'; hero.defending=false; monsterHurt=false;
+  document.getElementById('nextBtn').style.display='none';
+  setActionsEnabled(true);
+  log('<span class="info">새로운 귀여운 몬스터가 나타났습니다!</span>');
+  updateUI();
+}
+
+function resetGame(){
+  hero={hp:100,maxHp:100,mp:30,maxMp:30,atk:12,def:5,level:1,exp:0,gold:0,defending:false};
+  monsterIdx=0; monster=getMonster(); turn='player'; busy=false; monsterHurt=false;
+  document.getElementById('nextBtn').style.display='none';
+  setActionsEnabled(true);
+  log('<span class="info">귀여운 몬스터들이 기다리고 있어요! 모험을 시작하세요.</span>');
+  updateUI();
+}
+
+monster=getMonster();
+updateUI();
+</script>
+</body>
+</html>
